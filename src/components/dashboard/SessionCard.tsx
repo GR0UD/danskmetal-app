@@ -79,7 +79,13 @@ export default function SessionCard({
                 className={styles.deleteOrderButton}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDeleteOrder(order._id);
+                  if (
+                    confirm(
+                      `Er du sikker på, at du vil slette ${order.customer || "denne"}s ordre?`,
+                    )
+                  ) {
+                    onDeleteOrder(order._id);
+                  }
                 }}
                 disabled={deletingOrderId === order._id}
                 title="Slet ordre"
