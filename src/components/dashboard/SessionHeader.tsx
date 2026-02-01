@@ -43,7 +43,7 @@ export default function SessionHeader({
         </div>
         <div className={styles.cardCount}>
           {orderCount} Ordre{orderCount !== 1 ? "er" : ""}
-          {orderCount > 0 && <> ({uniqueCount} unikkHe)</>}
+          {orderCount > 0 && <> ({uniqueCount} unikke)</>}
         </div>
       </div>
       <div className={styles.cardActions}>
