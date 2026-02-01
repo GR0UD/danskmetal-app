@@ -30,24 +30,87 @@ export default function MenuPage() {
   const [customerName, setCustomerName] = useState("");
   const [nameSubmitted, setNameSubmitted] = useState(false);
   const [alreadyOrdered, setAlreadyOrdered] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<{
+    sandwich: string;
+    bread?: string;
+    dressing?: string;
+    image?: string;
+  } | null>(null);
+  const [isDeletingOrder, setIsDeletingOrder] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
-  // Check if user already ordered in this session
-  useEffect(() => {
-    const orderedSessions = JSON.parse(
-      localStorage.getItem("orderedSessions") || "[]",
-    );
-    if (orderedSessions.includes(menuId)) {
-      setAlreadyOrdered(true);
-    }
-  }, [menuId]);
-
-  // Validate session on mount
+  // Validate session and check if orders exist
   useEffect(() => {
     const validateSession = async () => {
       try {
         const response = await fetch(`${API_URL}/sessions/${menuId}`);
         const data = await response.json();
-        setSessionValid(data.ok);
+
+        if (data.ok) {
+          setSessionValid(true);
+
+          // Check if session has any orders remaining
+          try {
+            const hasOrdersResponse = await fetch(
+              `${API_URL}/sessions/${menuId}/has-orders`,
+            );
+            const hasOrdersData = await hasOrdersResponse.json();
+
+            // If session exists but has no orders, clear localStorage
+            // This allows re-ordering after admin deletion
+            if (hasOrdersData.ok && !hasOrdersData.hasOrders) {
+              const orderedSessions = JSON.parse(
+                localStorage.getItem("orderedSessions") || "[]",
+              );
+              const filtered = orderedSessions.filter(
+                (code: string) => code !== menuId,
+              );
+              localStorage.setItem("orderedSessions", JSON.stringify(filtered));
+              setAlreadyOrdered(false);
+            } else {
+              // Session has orders, check if user already ordered
+              const orderedSessions = JSON.parse(
+                localStorage.getItem("orderedSessions") || "[]",
+              );
+              if (orderedSessions.includes(menuId)) {
+                setAlreadyOrdered(true);
+                // Try to fetch their order details from localStorage first
+                const savedOrderDetails = localStorage.getItem(
+                  `orderDetails_${menuId}`,
+                );
+                if (savedOrderDetails) {
+                  try {
+                    setOrderDetails(JSON.parse(savedOrderDetails));
+                  } catch {
+                    // If parsing fails, order details will remain null
+                  }
+                }
+                // Restore customer name for deletion
+                const savedCustomerName = localStorage.getItem(
+                  `customerName_${menuId}`,
+                );
+                if (savedCustomerName) {
+                  setCustomerName(savedCustomerName);
+                }
+                // Restore order ID for secure deletion
+                const savedOrderId = localStorage.getItem(`orderId_${menuId}`);
+                if (savedOrderId) {
+                  setOrderId(savedOrderId);
+                }
+              }
+            }
+          } catch {
+            // Fallback: just check localStorage
+            const orderedSessions = JSON.parse(
+              localStorage.getItem("orderedSessions") || "[]",
+            );
+            if (orderedSessions.includes(menuId)) {
+              setAlreadyOrdered(true);
+            }
+          }
+        } else {
+          setSessionValid(false);
+        }
       } catch {
         setSessionValid(false);
       }
@@ -95,6 +158,26 @@ export default function MenuPage() {
       const data = await response.json();
 
       if (data.ok) {
+        // Save order ID for secure deletion
+        if (data.orderId) {
+          setOrderId(data.orderId);
+          localStorage.setItem(`orderId_${menuId}`, data.orderId);
+        }
+        // Save order details for display
+        const orderDetailsToSave = {
+          sandwich: order.sandwich,
+          bread: order.bread,
+          dressing: order.dressing,
+          image: order.image,
+        };
+        setOrderDetails(orderDetailsToSave);
+        // Save order details to localStorage to persist across sessions
+        localStorage.setItem(
+          `orderDetails_${menuId}`,
+          JSON.stringify(orderDetailsToSave),
+        );
+        // Save customer name for later deletion (trim to remove whitespace)
+        localStorage.setItem(`customerName_${menuId}`, customerName.trim());
         // Save to localStorage to prevent ordering again
         const orderedSessions = JSON.parse(
           localStorage.getItem("orderedSessions") || "[]",
@@ -112,6 +195,65 @@ export default function MenuPage() {
       setError("Kunne ikke forbinde til serveren");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!window.confirm("Er du sikker på, at du vil slette din ordre?")) {
+      return;
+    }
+
+    if (!orderId) {
+      // No orderId means old order without ID - can't delete securely
+      alert(
+        "Kunne ikke finde din ordre. Din ordre blev oprettet før slettefunktionen blev tilføjet.",
+      );
+      return;
+    }
+
+    setIsDeletingOrder(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/sessions/${menuId}/orders/self/${orderId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      const data = await response.json();
+
+      if (data.ok) {
+        // Remove from localStorage
+        const orderedSessions = JSON.parse(
+          localStorage.getItem("orderedSessions") || "[]",
+        );
+        const filtered = orderedSessions.filter(
+          (code: string) => code !== menuId,
+        );
+        localStorage.setItem("orderedSessions", JSON.stringify(filtered));
+        // Also remove order details, customer name, and order ID from localStorage
+        localStorage.removeItem(`orderDetails_${menuId}`);
+        localStorage.removeItem(`customerName_${menuId}`);
+        localStorage.removeItem(`orderId_${menuId}`);
+
+        // Reset all states to allow reordering
+        setAlreadyOrdered(false);
+        setOrderDetails(null);
+        setOrderId(null);
+        setNameSubmitted(false);
+        setCustomerName("");
+        setSelectedSandwich(null);
+        setSelectedBread(null);
+        setSelectedDressing(null);
+        setSubmitted(false);
+      } else {
+        alert("Kunne ikke slette ordren: " + (data.message || "Ukendt fejl"));
+      }
+    } catch {
+      alert("Fejl ved sletning af ordre");
+    } finally {
+      setIsDeletingOrder(false);
     }
   };
 
@@ -136,15 +278,6 @@ export default function MenuPage() {
     );
   }
 
-  // Show message if user already ordered
-  if (alreadyOrdered) {
-    return (
-      <div className={styles.menuContainer}>
-        <SuccessMessage customerName="" />
-      </div>
-    );
-  }
-
   // Show name entry screen
   if (!nameSubmitted) {
     return (
@@ -163,11 +296,18 @@ export default function MenuPage() {
   }
 
   // Show success message
-  if (submitted) {
+  if (submitted || alreadyOrdered) {
     return (
-      <div className={styles.menuContainer}>
-        <SuccessMessage customerName={customerName} />
-      </div>
+      <>
+        <div className={styles.menuContainer}>
+          <SuccessMessage
+            customerName={customerName}
+            order={orderDetails || undefined}
+            onDelete={handleDeleteOrder}
+            isDeleting={isDeletingOrder}
+          />
+        </div>
+      </>
     );
   }
 

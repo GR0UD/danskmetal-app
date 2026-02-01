@@ -1,7 +1,7 @@
 import styles from "./loading-skeleton.module.scss";
 
 interface LoadingSkeletonProps {
-  variant?: "page" | "session";
+  variant?: "page" | "session" | "order";
   count?: number;
 }
 
@@ -36,6 +36,29 @@ export default function LoadingSkeleton({
                 <div className={styles.actionButton} />
               </div>
             </div>
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  if (variant === "order") {
+    return (
+      <>
+        {Array.from({ length: count }).map((_, i) => (
+          <div key={i} className={styles.orderCard}>
+            <div className={styles.orderCardContent}>
+              <div className={styles.orderImage} />
+              <div className={styles.orderDetails}>
+                <div className={styles.orderName} />
+                <div className={styles.orderCustomer} />
+                <div className={styles.orderSpecs}>
+                  <div className={styles.orderSpec} />
+                  <div className={styles.orderSpec} />
+                </div>
+              </div>
+            </div>
+            <div className={styles.orderDeleteBtn} />
           </div>
         ))}
       </>

@@ -22,8 +22,8 @@ export default function QRModal({
 
   const menuUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/menu/${sessionCode}`
-      : `/menu/${sessionCode}`;
+      ? `${window.location.origin}/${sessionCode}`
+      : `/${sessionCode}`;
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(menuUrl)}`;
 

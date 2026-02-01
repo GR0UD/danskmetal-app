@@ -25,74 +25,57 @@ export default function SessionCard({
       ) : (
         orders.map((order) => (
           <div key={order._id} className={styles.sandwichCard}>
-            <a
-              href={order.url || "#"}
-              target={order.url ? "_blank" : "_self"}
-              rel={order.url ? "noopener noreferrer" : ""}
-              className={styles.sandwichCardLink}
-              onClick={(e) => {
-                if (!order.url) {
-                  e.preventDefault();
-                }
-              }}
-            >
-              <div className={styles.sandwichImageContainer}>
-                {order.image && order.image.trim() !== "" ? (
-                  <Image
-                    src={order.image}
-                    alt={order.sandwich}
-                    width={80}
-                    height={80}
-                    className={styles.sandwichImage}
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.display =
-                        "none";
-                    }}
-                  />
-                ) : (
-                  <div className={styles.iconDisplay}>
-                    {order.sandwich === "Pastasalat" ? (
-                      <BiSolidBowlRice size={48} />
-                    ) : (
-                      <GiSandwich size={48} />
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className={styles.sandwichCardDetails}>
-                <div className={styles.sandwichName}>{order.sandwich}</div>
-                <div className={styles.customerName}>
-                  {order.customer || "Ukendt"}
-                </div>
-                <div className={styles.sandwichSpecs}>
-                  <span className={styles.spec}>
-                    {order.bread || "Ingen brød"}
-                  </span>
-                  <span className={styles.spec}>
-                    {order.dressing || "Ingen dressing"}
-                  </span>
-                </div>
-              </div>
-            </a>
-            {onDeleteOrder && (
-              <button
-                className={styles.deleteOrderButton}
+            <div className={styles.sandwichCardContent}>
+              <a
+                href={order.url || "#"}
+                target={order.url ? "_blank" : "_self"}
+                rel={order.url ? "noopener noreferrer" : ""}
+                className={styles.sandwichCardLink}
                 onClick={(e) => {
-                  e.stopPropagation();
-                  if (
-                    confirm(
-                      `Er du sikker på, at du vil slette ${order.customer || "denne"}s ordre?`,
-                    )
-                  ) {
-                    onDeleteOrder(order._id);
+                  if (!order.url) {
+                    e.preventDefault();
                   }
                 }}
-                disabled={deletingOrderId === order._id}
-                title="Slet ordre"
               >
-                <IoTrash size={18} />
-              </button>
-            )}
+                <div className={styles.sandwichImageContainer}>
+                  {order.image && order.image.trim() !== "" ? (
+                    <Image
+                      src={order.image}
+                      alt={order.sandwich}
+                      width={80}
+                      height={80}
+                      className={styles.sandwichImage}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display =
+                          "none";
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.iconDisplay}>
+                      {order.sandwich === "Pastasalat" ? (
+                        <BiSolidBowlRice size={48} />
+                      ) : (
+                        <GiSandwich size={48} />
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className={styles.sandwichCardDetails}>
+                  <div className={styles.sandwichName}>{order.sandwich}</div>
+                  <div className={styles.customerName}>
+                    {order.customer || "Ukendt"}
+                  </div>
+                  <div className={styles.sandwichSpecs}>
+                    <span className={styles.spec}>
+                      {order.bread || "Ingen brød"}
+                    </span>
+                    <span className={styles.spec}>
+                      {order.dressing || "Ingen dressing"}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
           </div>
         ))
       )}

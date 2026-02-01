@@ -1,4 +1,4 @@
-import styles from "@/app/(pages)/menu/[id]/menu.module.scss";
+import styles from "@/app/[id]/menu.module.scss";
 
 export interface DressingOption {
   id: string;

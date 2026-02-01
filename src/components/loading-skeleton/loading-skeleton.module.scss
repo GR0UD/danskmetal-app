@@ -47,8 +47,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1rem;
   padding: 2rem;
+  flex-wrap: wrap;
 }
 
 .sessionContent {
@@ -56,6 +57,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .sessionTitleRow {
@@ -95,6 +97,7 @@
 
 .sessionActions {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
 }
 
@@ -103,4 +106,118 @@
   height: 36px;
   background: #e0e0e0;
   border-radius: 0.4rem;
+}
+
+// Order card skeleton
+.orderCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  border: 1px solid #e8e8e8;
+  border-radius: 0.6rem;
+  animation: pulse 1.5s ease-in-out infinite;
+  position: relative;
+}
+
+.orderCardContent {
+  display: flex;
+  flex: 1;
+  gap: 1rem;
+}
+
+.orderImage {
+  width: 100px;
+  height: 100px;
+  background: #e0e0e0;
+  border-radius: 0.4rem;
+  flex-shrink: 0;
+}
+
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.orderName {
+  height: 1rem;
+  width: 60%;
+  background: #e0e0e0;
+  border-radius: 0.25rem;
+}
+
+.orderCustomer {
+  height: 0.85rem;
+  width: 45%;
+  background: #e0e0e0;
+  border-radius: 0.25rem;
+}
+
+.orderSpecs {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.orderSpec {
+  height: 1.2rem;
+  width: 60px;
+  background: #e0e0e0;
+  border-radius: 0.25rem;
+}
+
+.orderDeleteBtn {
+  width: 36px;
+  height: 36px;
+  background: #fee2e2;
+  border-radius: 0.4rem;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .orderCard {
+    gap: 0.75rem;
+    padding: 0.875rem;
+  }
+
+  .orderCardContent {
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .orderImage {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+  }
+
+  .orderDetails {
+    padding-right: 2.5rem;
+  }
+
+  .orderName {
+    height: 0.9rem;
+  }
+
+  .orderCustomer {
+    height: 0.75rem;
+  }
+
+  .orderSpec {
+    height: 1rem;
+    width: 50px;
+  }
+
+  .orderDeleteBtn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 32px;
+    height: 32px;
+  }
 }

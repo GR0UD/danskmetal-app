@@ -1,6 +1,6 @@
 import { GiSandwich } from "react-icons/gi";
 import Image from "next/image";
-import styles from "@/app/(pages)/menu/[id]/menu.module.scss";
+import styles from "@/app/[id]/menu.module.scss";
 
 export interface Sandwich {
   id: number;
@@ -40,9 +40,9 @@ export default function SandwichSelection({
                 <Image
                   src={sandwich.image}
                   alt={sandwich.name}
-                  fill
+                  width={220}
+                  height={220}
                   quality={90}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className={styles.sandwichImage}
                 />
               ) : (

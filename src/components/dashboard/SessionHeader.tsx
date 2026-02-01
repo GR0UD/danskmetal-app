@@ -28,7 +28,7 @@ export default function SessionHeader({
       <div className={styles.cardContent}>
         <div className={styles.cardHeader}>
           <div className={styles.cardTitle}>
-            Menu Session
+            Menukort
             <span
               className={`${styles.statusBadge} ${
                 status === "active" ? styles.active : styles.closed
@@ -37,41 +37,41 @@ export default function SessionHeader({
               {status === "active" ? "Aktiv" : "Lukket"}
             </span>
           </div>
-          <div className={styles.cardActions}>
-            <button
-              className={styles.qrButton}
-              onClick={(e) => {
-                e.stopPropagation();
-                onQRClick();
-              }}
-              title="Vis QR-kode"
-            >
-              <IoQrCode size={20} />
-            </button>
-            <button
-              className={styles.deleteButton}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteClick();
-              }}
-              title="Slet session"
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <ImSpinner8 size={20} className={styles.spinner} />
-              ) : (
-                <IoTrash size={20} />
-              )}
-            </button>
-          </div>
         </div>
         <div className={styles.cardDate}>
           {createdDate} kl. {createdTime}
         </div>
         <div className={styles.cardCount}>
-          {orderCount} sandwich{orderCount !== 1 ? "er" : ""}
-          {orderCount > 0 && <> ({uniqueCount} unikke)</>}
+          {orderCount} Ordre{orderCount !== 1 ? "er" : ""}
+          {orderCount > 0 && <> ({uniqueCount} unikkHe)</>}
         </div>
+      </div>
+      <div className={styles.cardActions}>
+        <button
+          className={styles.qrButton}
+          onClick={(e) => {
+            e.stopPropagation();
+            onQRClick();
+          }}
+          title="Vis QR-kode"
+        >
+          <IoQrCode size={20} />
+        </button>
+        <button
+          className={styles.deleteButton}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteClick();
+          }}
+          title="Slet session"
+          disabled={isDeleting}
+        >
+          {isDeleting ? (
+            <ImSpinner8 size={20} className={styles.spinner} />
+          ) : (
+            <IoTrash size={20} />
+          )}
+        </button>
       </div>
     </summary>
   );

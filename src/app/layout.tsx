@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
-import { Raleway } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Header from "@/components/header";
+
 import "@/styles/main.scss";
 
-const raleway = Raleway({
-  variable: "--font-raleway",
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -21,7 +29,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="da" data-scroll-behavior="smooth">
-      <body className={raleway.variable}>
+      <body className={`${poppins.variable} ${inter.variable}`}>
+        <Header />
         {children}
         <ToastContainer position="bottom-center" autoClose={3000} />
       </body>

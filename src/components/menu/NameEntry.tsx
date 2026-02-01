@@ -1,4 +1,4 @@
-import styles from "@/app/(pages)/menu/[id]/menu.module.scss";
+import styles from "@/app/[id]/menu.module.scss";
 
 interface NameEntryProps {
   customerName: string;
@@ -17,7 +17,7 @@ export default function NameEntry({
       <p>Indtast dit navn for at bestille</p>
       <input
         type="text"
-        placeholder="Dit navn"
+        placeholder="Navn"
         value={customerName}
         onChange={(e) => onNameChange(e.target.value)}
         className={styles.nameInput}
