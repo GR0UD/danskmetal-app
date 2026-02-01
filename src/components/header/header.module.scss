@@ -1,0 +1,23 @@
+@use "@/styles/base/variables" as *;
+
+.header {
+  background-color: $color-dark-blue-base;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 0 hsla(0, 0%, 100%, 0.2);
+  padding: 2rem;
+
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  svg {
+    width: 8em;
+    height: auto;
+  }
+}

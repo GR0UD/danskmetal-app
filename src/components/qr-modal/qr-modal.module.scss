@@ -1,0 +1,178 @@
+@use "@/styles/base/variables" as *;
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.modal {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.overlay.closing {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+.modal.closing {
+  animation: slideDown 0.2s ease-out forwards;
+}
+
+.closeButton {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  background-color: #dc2626;
+  color: #fff;
+  padding: 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #b91c1c;
+  }
+}
+
+.qrContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.qrCode {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+}
+
+.linkContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.clickableLink {
+  position: relative;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $color-light-blue;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e8e8e8;
+  border-radius: 0.5rem;
+  background: #f9f9f9;
+  transition: all 0.2s ease;
+  word-break: break-all;
+  text-align: center;
+  width: 100%;
+
+  &:hover {
+    background: rgba($color-light-blue, 0.1);
+    border-color: $color-light-blue;
+    text-decoration: underline;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.tooltip {
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeInUp 0.2s ease-out;
+  z-index: 10;
+  transform: translateX(-50%);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

@@ -1,0 +1,28 @@
+@use "../styles/base/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: $color-dark-blue-base;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+
+.title {
+  font-size: clamp(8rem, 25vw, 16rem);
+  font-weight: 700;
+  color: $color-light-blue;
+  margin: 0;
+  line-height: 1;
+}
+
+.description {
+  font-size: 1.25rem;
+  color: $color-lighter-blue;
+  margin-top: 1rem;
+  font-weight: 400;
+}
