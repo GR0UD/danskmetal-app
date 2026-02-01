@@ -10,7 +10,7 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "Dansk Metala - Sandwich Bestilling",
+  title: "Dansk Metal - Sandwich Bestilling",
   description: "Bestil sandwiches til dit team med QR-koder",
 };
 
