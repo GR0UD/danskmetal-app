@@ -29,6 +29,17 @@ export default function MenuPage() {
   const [error, setError] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [nameSubmitted, setNameSubmitted] = useState(false);
+  const [alreadyOrdered, setAlreadyOrdered] = useState(false);
+
+  // Check if user already ordered in this session
+  useEffect(() => {
+    const orderedSessions = JSON.parse(
+      localStorage.getItem("orderedSessions") || "[]",
+    );
+    if (orderedSessions.includes(menuId)) {
+      setAlreadyOrdered(true);
+    }
+  }, [menuId]);
 
   // Validate session on mount
   useEffect(() => {
@@ -84,6 +95,15 @@ export default function MenuPage() {
       const data = await response.json();
 
       if (data.ok) {
+        // Save to localStorage to prevent ordering again
+        const orderedSessions = JSON.parse(
+          localStorage.getItem("orderedSessions") || "[]",
+        );
+        orderedSessions.push(menuId);
+        localStorage.setItem(
+          "orderedSessions",
+          JSON.stringify(orderedSessions),
+        );
         setSubmitted(true);
       } else {
         setError(data.message || "Kunne ikke gemme ordren");
@@ -112,6 +132,15 @@ export default function MenuPage() {
           <h2>Session ikke fundet</h2>
           <p>Denne menu-session findes ikke eller er udløbet.</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show message if user already ordered
+  if (alreadyOrdered) {
+    return (
+      <div className={styles.menuContainer}>
+        <SuccessMessage customerName="" />
       </div>
     );
   }

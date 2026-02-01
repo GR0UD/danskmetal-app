@@ -26,6 +26,7 @@ export interface DressingOption {
 
 // Session/Order types
 export interface Order {
+  _id: string;
   sandwich: string;
   bread?: string;
   dressing?: string;

@@ -124,7 +124,7 @@ export default function Home() {
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
-              type="text"
+              type="password"
               inputMode="numeric"
               pattern="[0-9]*"
               maxLength={1}

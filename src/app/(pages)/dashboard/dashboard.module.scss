@@ -249,7 +249,7 @@
 .sandwichCard {
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 1rem;
   padding: 1rem;
   background: white;
   border: 1px solid #e8e8e8;
@@ -257,13 +257,47 @@
   text-decoration: none;
   color: inherit;
   transition: all 0.3s ease;
-  cursor: pointer;
   position: relative;
 
   &:hover {
     background: #fafafa;
     border-color: #d0d0d0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.sandwichCardLink {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.deleteOrderButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 0.4rem;
+  background: #fee2e2;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: center;
+
+  &:hover:not(:disabled) {
+    background: #fecaca;
+    color: #b91c1c;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -425,12 +459,25 @@
 // Responsive Design
 @media (max-width: 768px) {
   .sandwichCard {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sandwichCardLink {
     flex-direction: column;
+    min-width: 0;
+  }
+
+  .deleteOrderButton {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
   }
 
   .sandwichImageContainer {
-    width: 100%;
-    height: 100%;
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
   }
 
   .ordersGrid {

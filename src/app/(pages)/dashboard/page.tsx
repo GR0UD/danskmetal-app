@@ -9,7 +9,7 @@ import LoadingSkeleton from "@/components/loading-skeleton";
 import { getAuthToken } from "@/app/actions";
 import { useApi } from "@/hooks/useApi";
 import { useDate } from "@/hooks/useDate";
-import type { Session, Order, GroupedOrder } from "@/types";
+import type { Session } from "@/types";
 import styles from "./dashboard.module.scss";
 
 export default function DashboardPage() {
@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [deletingCode, setDeletingCode] = useState<string | null>(null);
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSessionCode, setSelectedSessionCode] = useState("");
   const { fetchApi } = useApi();
@@ -97,31 +98,31 @@ export default function DashboardPage() {
     setModalOpen(true);
   };
 
-  const groupOrders = (orders: Order[]): GroupedOrder[] => {
-    const groups: { [key: string]: GroupedOrder } = {};
+  const handleDeleteOrder = async (sessionCode: string, orderId: string) => {
+    setDeletingOrderId(orderId);
 
-    orders.forEach((order) => {
-      const key = `${order.sandwich}|${order.bread || ""}|${order.dressing || ""}`;
+    const { ok } = await fetchApi(
+      `/sessions/${sessionCode}/orders/${orderId}`,
+      {
+        method: "DELETE",
+        requireAuth: true,
+      },
+    );
 
-      if (groups[key]) {
-        groups[key].count++;
-        if (order.customer) {
-          groups[key].customers.push(order.customer);
-        }
-      } else {
-        groups[key] = {
-          sandwich: order.sandwich,
-          bread: order.bread,
-          dressing: order.dressing,
-          image: order.image,
-          url: order.url,
-          count: 1,
-          customers: order.customer ? [order.customer] : [],
-        };
-      }
-    });
+    if (ok) {
+      setSessions((prev) =>
+        prev.map((session) =>
+          session.code === sessionCode
+            ? {
+                ...session,
+                orders: session.orders.filter((o) => o._id !== orderId),
+              }
+            : session,
+        ),
+      );
+    }
 
-    return Object.values(groups);
+    setDeletingOrderId(null);
   };
 
   return (
@@ -170,7 +171,13 @@ export default function DashboardPage() {
                   onDeleteClick={() => handleDeleteSession(session.code)}
                   isDeleting={deletingCode === session.code}
                 />
-                <SessionCard orders={groupOrders(session.orders)} />
+                <SessionCard
+                  orders={session.orders}
+                  onDeleteOrder={(orderId) =>
+                    handleDeleteOrder(session.code, orderId)
+                  }
+                  deletingOrderId={deletingOrderId}
+                />
               </details>
             );
           })
