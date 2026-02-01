@@ -1,0 +1,106 @@
+@use "sass:color";
+@use "@/styles/base/variables" as *;
+
+.pageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: $color-dark-blue-base;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid $color-lighter-blue;
+  border-top-color: $color-light-blue;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+// Session card skeleton
+.sessionCard {
+  background: linear-gradient(135deg, #ffffff, #f9f9f9);
+  border: 2px solid #e8e8e8;
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.sessionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.sessionContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sessionTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.sessionTitle {
+  height: 1.5rem;
+  width: 140px;
+  background: #e0e0e0;
+  border-radius: 0.25rem;
+}
+
+.sessionBadge {
+  height: 1.25rem;
+  width: 50px;
+  background: #e0e0e0;
+  border-radius: 1rem;
+}
+
+.sessionDate {
+  height: 1rem;
+  width: 180px;
+  background: #e0e0e0;
+  border-radius: 0.25rem;
+}
+
+.sessionCount {
+  height: 1rem;
+  width: 120px;
+  background: #e0e0e0;
+  border-radius: 0.25rem;
+}
+
+.sessionActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  width: 36px;
+  height: 36px;
+  background: #e0e0e0;
+  border-radius: 0.4rem;
+}

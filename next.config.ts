@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     loadPaths: ["./src"],
     additionalData: `$src: "/src";`,
   },
+  allowedDevOrigins: ["172.20.10.8"],
 };
 
 export default nextConfig;

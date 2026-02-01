@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IoClose } from "react-icons/io5";
+import Image from "next/image";
 import styles from "./qr-modal.module.scss";
 
 interface QRModalProps {
@@ -16,9 +17,8 @@ export default function QRModal({
   sessionCode,
 }: QRModalProps) {
   const [copied, setCopied] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [isClosing, setIsClosing] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const menuUrl =
     typeof window !== "undefined"
@@ -27,42 +27,46 @@ export default function QRModal({
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(menuUrl)}`;
 
-  // Preload the QR code image immediately when component mounts
-  useEffect(() => {
-    if (sessionCode) {
-      const img = new Image();
-      img.onload = () => setIsImageLoaded(true);
-      img.src = qrCodeUrl;
-    }
-  }, [sessionCode, qrCodeUrl]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsClosing(false);
-    }
-    if (!isOpen) {
-      setCopied(false);
-    }
-  }, [isOpen]);
-
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
       onClose();
+      // Reset state after modal is closed
+      setIsClosing(false);
+      setCopied(false);
     }, 200);
   };
 
   const handleCopyLink = async (e: React.MouseEvent) => {
-    const rect = (e.target as HTMLElement).getBoundingClientRect();
-    setTooltipPosition({
-      x: e.clientX - rect.left,
-      y: -30,
-    });
+    // Get position relative to the modal
+    const modal = (e.currentTarget as HTMLElement).closest(`.${styles.modal}`);
+    if (modal) {
+      const modalRect = modal.getBoundingClientRect();
+      setTooltipPos({
+        x: e.clientX - modalRect.left,
+        y: e.clientY - modalRect.top - 40,
+      });
+    }
 
     try {
-      await navigator.clipboard.writeText(menuUrl);
+      // Try modern clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(menuUrl);
+      } else {
+        // Fallback for mobile/older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = menuUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -84,22 +88,29 @@ export default function QRModal({
         </button>
 
         <div className={styles.qrContainer}>
-          <img src={qrCodeUrl} alt="QR Code" className={styles.qrCode} />
+          <Image
+            src={qrCodeUrl}
+            alt="QR Code"
+            width={200}
+            height={200}
+            className={styles.qrCode}
+            unoptimized
+          />
         </div>
 
         <div className={styles.linkContainer}>
           <span className={styles.clickableLink} onClick={handleCopyLink}>
             {menuUrl}
-            {copied && (
-              <span
-                className={styles.tooltip}
-                style={{ left: tooltipPosition.x, top: tooltipPosition.y }}
-              >
-                Kopieret!
-              </span>
-            )}
           </span>
         </div>
+        {copied && (
+          <span
+            className={styles.copiedBadge}
+            style={{ left: tooltipPos.x, top: tooltipPos.y }}
+          >
+            Kopieret!
+          </span>
+        )}
       </div>
     </div>
   );

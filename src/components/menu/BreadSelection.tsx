@@ -1,7 +1,7 @@
 import styles from "@/app/(pages)/menu/[id]/menu.module.scss";
 
 export interface BreadOption {
-  id: "lyst" | "groft" | "rugbrød" | "glutenfri";
+  id: string;
   name: string;
   icon: React.ReactNode;
 }
@@ -9,7 +9,7 @@ export interface BreadOption {
 interface BreadSelectionProps {
   breads: BreadOption[];
   selectedBread: string | null;
-  onSelect: (id: "lyst" | "groft" | "rugbrød" | "glutenfri") => void;
+  onSelect: (id: string) => void;
   disabled?: boolean;
 }
 
@@ -21,6 +21,7 @@ export default function BreadSelection({
 }: BreadSelectionProps) {
   return (
     <div
+      id="bread"
       className={styles.section}
       style={{
         opacity: disabled ? 0.5 : 1,

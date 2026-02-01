@@ -1,4 +1,5 @@
 import { GiSandwich } from "react-icons/gi";
+import Image from "next/image";
 import styles from "@/app/(pages)/menu/[id]/menu.module.scss";
 
 export interface Sandwich {
@@ -36,9 +37,11 @@ export default function SandwichSelection({
           >
             <div className={styles.imageContainer}>
               {sandwich.hasImage ? (
-                <img
+                <Image
                   src={sandwich.image}
                   alt={sandwich.name}
+                  width={100}
+                  height={100}
                   className={styles.sandwichImage}
                 />
               ) : (

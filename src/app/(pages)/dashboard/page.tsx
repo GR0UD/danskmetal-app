@@ -1,180 +1,101 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { IoAdd } from "react-icons/io5";
 import QRModal from "@/components/qr-modal";
 import { SessionHeader, SessionCard } from "@/components/dashboard";
-import { getAuthToken, deleteAuthToken } from "@/app/actions";
-import type { GroupedOrder } from "@/components/dashboard";
+import LoadingSkeleton from "@/components/loading-skeleton";
+import { getAuthToken } from "@/app/actions";
+import { useApi } from "@/hooks/useApi";
+import { useDate } from "@/hooks/useDate";
+import type { Session, Order, GroupedOrder } from "@/types";
 import styles from "./dashboard.module.scss";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-
-interface Order {
-  sandwich: string;
-  bread?: string;
-  dressing?: string;
-  customer?: string;
-  image?: string;
-  url?: string;
-  createdAt: string;
-}
-
-interface Session {
-  _id: string;
-  code: string;
-  status: "active" | "closed";
-  orders: Order[];
-  createdAt: string;
-}
 
 export default function DashboardPage() {
   const router = useRouter();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [deletingCode, setDeletingCode] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSessionCode, setSelectedSessionCode] = useState("");
+  const { fetchApi } = useApi();
+  const { formatDate, formatTime } = useDate();
 
-  const fetchSessions = async () => {
-    const token = await getAuthToken();
-    if (!token) {
-      router.push("/");
-      return;
+  const fetchSessions = useCallback(async () => {
+    const { data, ok } = await fetchApi<{ ok: boolean; sessions: Session[] }>(
+      "/sessions",
+      { requireAuth: true },
+    );
+
+    if (ok && data) {
+      setSessions(data.sessions);
     }
-
-    try {
-      const response = await fetch(`${API_URL}/sessions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 401) {
-        await deleteAuthToken();
-        router.push("/");
-        return;
-      }
-
-      const data = await response.json();
-      if (data.ok) {
-        setSessions(data.sessions);
-      }
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setLoading(false);
+  }, [fetchApi]);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuthAndFetch = async () => {
       const token = await getAuthToken();
       if (!token) {
-        router.push("/");
+        router.replace("/");
         return;
       }
       fetchSessions();
     };
 
-    checkAuth();
+    checkAuthAndFetch();
 
     // Poll for updates every 10 seconds
-    const interval = setInterval(() => fetchSessions(), 10000);
+    const interval = setInterval(fetchSessions, 10000);
     return () => clearInterval(interval);
-  }, [router]);
+  }, [router, fetchSessions]);
 
   const handleCreateSession = async () => {
-    const token = await getAuthToken();
-    if (!token) return;
-
     setCreating(true);
-    try {
-      const response = await fetch(`${API_URL}/sessions`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
 
-      const data = await response.json();
-      if (data.ok) {
-        setSessions((prev) => [data.session, ...prev]);
-        setSelectedSessionCode(data.session.code);
-        setModalOpen(true);
-      }
-    } catch (error) {
-      console.error("Error creating session:", error);
-    } finally {
-      setCreating(false);
+    const { data, ok, error } = await fetchApi<{
+      ok: boolean;
+      session: Session;
+    }>("/sessions", {
+      method: "POST",
+      requireAuth: true,
+      showErrorToast: true,
+    });
+
+    if (ok && data) {
+      setSessions((prev) => [data.session, ...prev]);
+      setSelectedSessionCode(data.session.code);
+      setModalOpen(true);
+    } else {
+      console.error("Failed to create session:", error);
     }
+
+    setCreating(false);
   };
 
   const handleDeleteSession = async (code: string) => {
-    const token = await getAuthToken();
-    if (!token) return;
-
     if (!confirm("Er du sikker på, at du vil slette denne session?")) return;
 
-    try {
-      const response = await fetch(`${API_URL}/sessions/${code}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    setDeletingCode(code);
 
-      if (response.ok) {
-        setSessions((prev) => prev.filter((s) => s.code !== code));
-      }
-    } catch (error) {
-      console.error("Error deleting session:", error);
+    const { ok } = await fetchApi(`/sessions/${code}`, {
+      method: "DELETE",
+      requireAuth: true,
+    });
+
+    if (ok) {
+      setSessions((prev) => prev.filter((s) => s.code !== code));
     }
+
+    setDeletingCode(null);
   };
 
   const handleOpenQR = (code: string) => {
     setSelectedSessionCode(code);
     setModalOpen(true);
   };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const months = [
-      "Januar",
-      "Februar",
-      "Marts",
-      "April",
-      "Maj",
-      "Juni",
-      "Juli",
-      "August",
-      "September",
-      "Oktober",
-      "November",
-      "December",
-    ];
-    return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString("da-DK", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  interface GroupedOrder {
-    sandwich: string;
-    bread?: string;
-    dressing?: string;
-    image?: string;
-    url?: string;
-    count: number;
-    customers: string[];
-  }
 
   const groupOrders = (orders: Order[]): GroupedOrder[] => {
     const groups: { [key: string]: GroupedOrder } = {};
@@ -203,14 +124,6 @@ export default function DashboardPage() {
     return Object.values(groups);
   };
 
-  if (loading) {
-    return (
-      <div className={styles.dashboardContainer}>
-        <div className={styles.loading}>Indlæser...</div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.header}>
@@ -225,7 +138,9 @@ export default function DashboardPage() {
       </div>
 
       <div className={styles.menusGrid}>
-        {sessions.length === 0 ? (
+        {loading ? (
+          <LoadingSkeleton variant="session" count={2} />
+        ) : sessions.length === 0 ? (
           <p className={styles.noOrders}>
             Ingen sessioner endnu. Klik på
             <span className={styles.indicator}>+</span> for at oprette en.
@@ -246,7 +161,6 @@ export default function DashboardPage() {
             return (
               <details key={session._id} className={styles.menuCard}>
                 <SessionHeader
-                  code={session.code}
                   status={session.status}
                   orderCount={session.orders.length}
                   uniqueCount={uniqueCount}
@@ -254,12 +168,9 @@ export default function DashboardPage() {
                   createdTime={formatTime(session.createdAt)}
                   onQRClick={() => handleOpenQR(session.code)}
                   onDeleteClick={() => handleDeleteSession(session.code)}
+                  isDeleting={deletingCode === session.code}
                 />
-                <SessionCard
-                  orders={groupOrders(session.orders)}
-                  onQRClick={() => handleOpenQR(session.code)}
-                  onDeleteClick={() => handleDeleteSession(session.code)}
-                />
+                <SessionCard orders={groupOrders(session.orders)} />
               </details>
             );
           })

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { toast } from "react-toastify";
 import { setAuthToken, getAuthToken } from "./actions";
 import styles from "./login.module.scss";
 
@@ -10,7 +12,6 @@ const PIN_LENGTH = 4;
 
 export default function Home() {
   const [pin, setPin] = useState<string[]>(Array(PIN_LENGTH).fill(""));
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const router = useRouter();
@@ -35,7 +36,6 @@ export default function Home() {
     const newPin = [...pin];
     newPin[index] = value;
     setPin(newPin);
-    setError("");
 
     // Auto-focus next input
     if (value && index < PIN_LENGTH - 1) {
@@ -72,7 +72,6 @@ export default function Home() {
 
   const handleLogin = async (pinCode: string) => {
     setLoading(true);
-    setError("");
 
     try {
       const response = await fetch(`${API_URL}/user/login`, {
@@ -89,12 +88,12 @@ export default function Home() {
         await setAuthToken(data.token);
         router.push("/dashboard");
       } else {
-        setError(data.message || "Forkert pinkode");
+        toast.error("Forkert Pinkode");
         setPin(Array(PIN_LENGTH).fill(""));
         inputRefs.current[0]?.focus();
       }
-    } catch (err) {
-      setError("Kunne ikke forbinde til serveren");
+    } catch {
+      toast.error("Kunne ikke forbinde til serveren");
       setPin(Array(PIN_LENGTH).fill(""));
       inputRefs.current[0]?.focus();
     } finally {
@@ -110,7 +109,13 @@ export default function Home() {
     <div className={styles.loginContainer}>
       <div className={styles.loginForm}>
         <div className={styles.faviconContainer}>
-          <img src="/favicon.ico" alt="Logo" className={styles.favicon} />
+          <Image
+            src="/favicon.ico"
+            alt="Logo"
+            width={48}
+            height={48}
+            className={styles.favicon}
+          />
         </div>
         <div className={styles.pinContainer}>
           {pin.map((digit, index) => (
@@ -127,13 +132,12 @@ export default function Home() {
               onChange={(e) => handlePinChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={index === 0 ? handlePaste : undefined}
-              className={`${styles.pinInput} ${error ? styles.inputError : ""}`}
+              className={styles.pinInput}
               disabled={loading}
               autoFocus={index === 0}
             />
           ))}
         </div>
-        {error && <div className={styles.errorMessage}>{error}</div>}
         {loading && <div className={styles.loadingText}>Logger ind...</div>}
       </div>
     </div>

@@ -2,10 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { GiKetchup } from "react-icons/gi";
-import { TbBread, TbBreadFilled } from "react-icons/tb";
-import { TbX } from "react-icons/tb";
-import { BiSolidBowlRice } from "react-icons/bi";
 import {
   NameEntry,
   SandwichSelection,
@@ -14,118 +10,18 @@ import {
   OrderSummary,
   SuccessMessage,
 } from "@/components/menu";
-import type {
-  Sandwich,
-  BreadOption,
-  DressingOption,
-} from "@/components/menu";
+import { sandwiches, breads, dressings } from "@/data/menu";
 import styles from "./menu.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-
-const BreadIcon = () => <TbBread size={32} />;
-const DarkBreadIcon = () => <TbBreadFilled size={32} />;
-const DressingIcon = () => <GiKetchup size={32} />;
-const NoIcon = () => <TbX size={32} />;
 
 export default function MenuPage() {
   const params = useParams();
   const router = useRouter();
   const menuId = params.id as string;
 
-  const sandwiches: Sandwich[] = [
-    {
-      id: 1,
-      name: "Frikadelle",
-      description: "Frikadelle, rødkål og syltet agurker",
-      image: "/images/frikadelle.webp",
-      hasImage: true,
-      url: "https://seestbageri.dk/vare/sandwich-med-frikadelle-roedkaal-og-syltede-agurker/",
-    },
-    {
-      id: 2,
-      name: "Kylling & Bacon",
-      description: "Kylling og bacon",
-      image: "/images/kylling-bacon.webp",
-      hasImage: true,
-      url: "https://seestbageri.dk/vare/sandwich-m-kylling-og-bacon/",
-    },
-    {
-      id: 3,
-      name: "Kylling & Salsa",
-      description: "Kylling, salsa og nachos",
-      image: "/images/kylling-salsa.webp",
-      hasImage: true,
-      url: "https://seestbageri.dk/vare/sandwich-m-kylling-og-nachos/",
-    },
-    {
-      id: 4,
-      name: "Tun",
-      description: "Tun, æg og rødløg",
-      image: "/images/tun.webp",
-      hasImage: true,
-      url: "https://seestbageri.dk/vare/sandwich-m-tun-og-aeg/",
-    },
-    {
-      id: 5,
-      name: "Kalkun & Ost",
-      description: "Kalkun og ost",
-      image: "/images/kalkun.webp",
-      hasImage: true,
-      url: "https://seestbageri.dk/vare/sandwich-med-kalkun-og-ost/",
-    },
-    {
-      id: 6,
-      name: "Spegepølse",
-      description: "Spegepølse, remoulade og ristet løg",
-      image: "",
-      hasImage: false,
-      url: "https://seestbageri.dk/vare/sandwich-m-spegepoelse-remoulade-og-ristet-loeg/",
-    },
-    {
-      id: 7,
-      name: "Falafel",
-      description: "Falafel og revet gulerødder",
-      image: "",
-      hasImage: false,
-      url: "https://seestbageri.dk/vare/sandwich-m-humus-falafel-og-revet-guleroedder/",
-    },
-    {
-      id: 8,
-      name: "Pastasalat",
-      description: "Pastasalat m. krydret kylling",
-      image: "",
-      hasImage: false,
-      noBreadDressing: true,
-      customIcon: <BiSolidBowlRice className={styles.sandwichIcon} />,
-      url: "https://seestbageri.dk/vare/pastasalat-m-krydret-kylling/",
-    },
-  ];
-
-  const dressings: DressingOption[] = [
-    { id: "karry", name: "Karry", icon: <DressingIcon /> },
-    { id: "creme", name: "Creme Fraiche", icon: <DressingIcon /> },
-    { id: "chili", name: "Chili Mayo", icon: <DressingIcon /> },
-    {
-      id: "salsa",
-      name: "Stærk Salsa",
-      icon: <DressingIcon />,
-    },
-    { id: "remoulade", name: "Remoulade", icon: <DressingIcon /> },
-    { id: "ingen", name: "Ingen", icon: <NoIcon /> },
-  ];
-
-  const breads: BreadOption[] = [
-    { id: "lyst", name: "Lyst Brød", icon: <DarkBreadIcon /> },
-    { id: "groft", name: "Groft Brød", icon: <DarkBreadIcon /> },
-    { id: "rugbrød", name: "Rugbrød", icon: <DarkBreadIcon /> },
-    { id: "glutenfri", name: "Glutenfri", icon: <DarkBreadIcon /> },
-  ];
-
   const [selectedSandwich, setSelectedSandwich] = useState<number | null>(null);
-  const [selectedBread, setSelectedBread] = useState<
-    "lyst" | "rugbrød" | "groft" | "glutenfri" | null
-  >(null);
+  const [selectedBread, setSelectedBread] = useState<string | null>(null);
   const [selectedDressing, setSelectedDressing] = useState<string | null>(null);
   const [sessionValid, setSessionValid] = useState<boolean | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -141,7 +37,7 @@ export default function MenuPage() {
         const response = await fetch(`${API_URL}/sessions/${menuId}`);
         const data = await response.json();
         setSessionValid(data.ok);
-      } catch (err) {
+      } catch {
         setSessionValid(false);
       }
     };
@@ -192,7 +88,7 @@ export default function MenuPage() {
       } else {
         setError(data.message || "Kunne ikke gemme ordren");
       }
-    } catch (err) {
+    } catch {
       setError("Kunne ikke forbinde til serveren");
     } finally {
       setSubmitting(false);
@@ -253,7 +149,6 @@ export default function MenuPage() {
         selectedSandwich={selectedSandwich}
         onSelect={(id) => {
           setSelectedSandwich(id);
-          router.replace("#bread");
           const sandwich = sandwiches.find((s) => s.id === id);
           if (sandwich?.noBreadDressing) {
             setSelectedBread(null);
@@ -266,6 +161,16 @@ export default function MenuPage() {
               setSelectedDressing("ingen");
             }
           }
+          // Scroll to bread section after state update
+          setTimeout(() => {
+            const breadSection = document.getElementById("bread");
+            if (breadSection) {
+              breadSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }
+          }, 100);
         }}
       />
 

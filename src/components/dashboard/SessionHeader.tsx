@@ -1,8 +1,8 @@
 import { IoQrCode, IoTrash } from "react-icons/io5";
+import { ImSpinner8 } from "react-icons/im";
 import styles from "@/app/(pages)/dashboard/dashboard.module.scss";
 
 interface SessionHeaderProps {
-  code: string;
   status: "active" | "closed";
   orderCount: number;
   uniqueCount: number;
@@ -10,10 +10,10 @@ interface SessionHeaderProps {
   createdTime: string;
   onQRClick: () => void;
   onDeleteClick: () => void;
+  isDeleting?: boolean;
 }
 
 export default function SessionHeader({
-  code,
   status,
   orderCount,
   uniqueCount,
@@ -21,6 +21,7 @@ export default function SessionHeader({
   createdTime,
   onQRClick,
   onDeleteClick,
+  isDeleting = false,
 }: SessionHeaderProps) {
   return (
     <summary className={styles.cardSummary}>
@@ -54,8 +55,13 @@ export default function SessionHeader({
                 onDeleteClick();
               }}
               title="Slet session"
+              disabled={isDeleting}
             >
-              <IoTrash size={20} />
+              {isDeleting ? (
+                <ImSpinner8 size={20} className={styles.spinner} />
+              ) : (
+                <IoTrash size={20} />
+              )}
             </button>
           </div>
         </div>

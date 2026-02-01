@@ -1,0 +1,48 @@
+@use "sass:color";
+@use "@/styles/base/variables" as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: $color-dark-blue-base;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-light-blue;
+  margin: 0 0 1rem;
+}
+
+.description {
+  font-size: 1.1rem;
+  color: $color-lighter-blue;
+  margin-bottom: 2rem;
+}
+
+.button {
+  background-color: $color-light-blue;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: $button-border-radius;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: color.adjust($color-light-blue, $lightness: -10%);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

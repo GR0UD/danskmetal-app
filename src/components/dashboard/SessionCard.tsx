@@ -1,6 +1,6 @@
 import { GiSandwich } from "react-icons/gi";
 import { BiSolidBowlRice } from "react-icons/bi";
-import { IoQrCode, IoTrash } from "react-icons/io5";
+import Image from "next/image";
 import styles from "@/app/(pages)/dashboard/dashboard.module.scss";
 
 export interface GroupedOrder {
@@ -15,15 +15,9 @@ export interface GroupedOrder {
 
 interface SessionCardProps {
   orders: GroupedOrder[];
-  onQRClick: () => void;
-  onDeleteClick: () => void;
 }
 
-export default function SessionCard({
-  orders,
-  onQRClick,
-  onDeleteClick,
-}: SessionCardProps) {
+export default function SessionCard({ orders }: SessionCardProps) {
   return (
     <div className={styles.sandwichList}>
       {orders.length === 0 ? (
@@ -47,12 +41,15 @@ export default function SessionCard({
             <div className={styles.sandwichImageContainer}>
               <span className={styles.orderCount}>{group.count}x</span>
               {group.image && group.image.trim() !== "" ? (
-                <img
+                <Image
                   src={group.image}
                   alt={group.sandwich}
+                  width={80}
+                  height={80}
                   className={styles.sandwichImage}
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    (e.currentTarget as HTMLImageElement).style.display =
+                      "none";
                   }}
                 />
               ) : (
