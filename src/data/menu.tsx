@@ -4,7 +4,7 @@ import { TbBread, TbBreadFilled, TbX } from "react-icons/tb";
 import type { Sandwich, BreadOption, DressingOption } from "@/types";
 
 // Icons
-export const BreadIcon = () => <TbBread size={32} />;
+export const BreadIcon = () => <TbBreadFilled size={32} />;
 export const DarkBreadIcon = () => <TbBreadFilled size={32} />;
 export const DressingIcon = () => <GiKetchup size={32} />;
 export const NoIcon = () => <TbX size={32} />;
