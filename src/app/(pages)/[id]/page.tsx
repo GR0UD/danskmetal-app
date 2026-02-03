@@ -56,26 +56,29 @@ export default function MenuPage() {
             );
             const hasOrdersData = await hasOrdersResponse.json();
 
-            // If session exists but has no orders, clear localStorage
+            // If session exists but has no orders, clear sessionStorage
             // This allows re-ordering after admin deletion
             if (hasOrdersData.ok && !hasOrdersData.hasOrders) {
               const orderedSessions = JSON.parse(
-                localStorage.getItem("orderedSessions") || "[]",
+                sessionStorage.getItem("orderedSessions") || "[]",
               );
               const filtered = orderedSessions.filter(
                 (code: string) => code !== menuId,
               );
-              localStorage.setItem("orderedSessions", JSON.stringify(filtered));
+              sessionStorage.setItem(
+                "orderedSessions",
+                JSON.stringify(filtered),
+              );
               setAlreadyOrdered(false);
             } else {
               // Session has orders, check if user already ordered
               const orderedSessions = JSON.parse(
-                localStorage.getItem("orderedSessions") || "[]",
+                sessionStorage.getItem("orderedSessions") || "[]",
               );
               if (orderedSessions.includes(menuId)) {
                 setAlreadyOrdered(true);
-                // Try to fetch their order details from localStorage first
-                const savedOrderDetails = localStorage.getItem(
+                // Try to fetch their order details from sessionStorage first
+                const savedOrderDetails = sessionStorage.getItem(
                   `orderDetails_${menuId}`,
                 );
                 if (savedOrderDetails) {
@@ -86,23 +89,25 @@ export default function MenuPage() {
                   }
                 }
                 // Restore customer name for deletion
-                const savedCustomerName = localStorage.getItem(
+                const savedCustomerName = sessionStorage.getItem(
                   `customerName_${menuId}`,
                 );
                 if (savedCustomerName) {
                   setCustomerName(savedCustomerName);
                 }
                 // Restore order ID for secure deletion
-                const savedOrderId = localStorage.getItem(`orderId_${menuId}`);
+                const savedOrderId = sessionStorage.getItem(
+                  `orderId_${menuId}`,
+                );
                 if (savedOrderId) {
                   setOrderId(savedOrderId);
                 }
               }
             }
           } catch {
-            // Fallback: just check localStorage
+            // Fallback: just check sessionStorage
             const orderedSessions = JSON.parse(
-              localStorage.getItem("orderedSessions") || "[]",
+              sessionStorage.getItem("orderedSessions") || "[]",
             );
             if (orderedSessions.includes(menuId)) {
               setAlreadyOrdered(true);
@@ -161,7 +166,7 @@ export default function MenuPage() {
         // Save order ID for secure deletion
         if (data.orderId) {
           setOrderId(data.orderId);
-          localStorage.setItem(`orderId_${menuId}`, data.orderId);
+          sessionStorage.setItem(`orderId_${menuId}`, data.orderId);
         }
         // Save order details for display
         const orderDetailsToSave = {
@@ -171,19 +176,19 @@ export default function MenuPage() {
           image: order.image,
         };
         setOrderDetails(orderDetailsToSave);
-        // Save order details to localStorage to persist across sessions
-        localStorage.setItem(
+        // Save order details to sessionStorage to persist within browser session
+        sessionStorage.setItem(
           `orderDetails_${menuId}`,
           JSON.stringify(orderDetailsToSave),
         );
         // Save customer name for later deletion (trim to remove whitespace)
-        localStorage.setItem(`customerName_${menuId}`, customerName.trim());
-        // Save to localStorage to prevent ordering again
+        sessionStorage.setItem(`customerName_${menuId}`, customerName.trim());
+        // Save to sessionStorage to prevent ordering again
         const orderedSessions = JSON.parse(
-          localStorage.getItem("orderedSessions") || "[]",
+          sessionStorage.getItem("orderedSessions") || "[]",
         );
         orderedSessions.push(menuId);
-        localStorage.setItem(
+        sessionStorage.setItem(
           "orderedSessions",
           JSON.stringify(orderedSessions),
         );
@@ -224,18 +229,18 @@ export default function MenuPage() {
       const data = await response.json();
 
       if (data.ok) {
-        // Remove from localStorage
+        // Remove from sessionStorage
         const orderedSessions = JSON.parse(
-          localStorage.getItem("orderedSessions") || "[]",
+          sessionStorage.getItem("orderedSessions") || "[]",
         );
         const filtered = orderedSessions.filter(
           (code: string) => code !== menuId,
         );
-        localStorage.setItem("orderedSessions", JSON.stringify(filtered));
-        // Also remove order details, customer name, and order ID from localStorage
-        localStorage.removeItem(`orderDetails_${menuId}`);
-        localStorage.removeItem(`customerName_${menuId}`);
-        localStorage.removeItem(`orderId_${menuId}`);
+        sessionStorage.setItem("orderedSessions", JSON.stringify(filtered));
+        // Also remove order details, customer name, and order ID from sessionStorage
+        sessionStorage.removeItem(`orderDetails_${menuId}`);
+        sessionStorage.removeItem(`customerName_${menuId}`);
+        sessionStorage.removeItem(`orderId_${menuId}`);
 
         // Reset all states to allow reordering
         setAlreadyOrdered(false);
