@@ -10,7 +10,7 @@ import { getAuthToken } from "@/app/actions";
 import { useApi } from "@/hooks/useApi";
 import { useDate } from "@/hooks/useDate";
 import type { Session } from "@/types";
-import styles from "./dashboard.module.scss";
+import styles from "@/styles/pages/dashboard.module.scss";
 
 export default function DashboardPage() {
   const router = useRouter();

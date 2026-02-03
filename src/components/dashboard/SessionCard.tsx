@@ -3,7 +3,7 @@ import { BiSolidBowlRice } from "react-icons/bi";
 import { IoTrash } from "react-icons/io5";
 import Image from "next/image";
 import type { Order } from "@/types";
-import styles from "@/app/(pages)/dashboard/dashboard.module.scss";
+import styles from "@/styles/pages/dashboard.module.scss";
 
 interface SessionCardProps {
   orders: Order[];

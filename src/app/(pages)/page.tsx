@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { setAuthToken, getAuthToken } from "./actions";
-import styles from "./login.module.scss";
+import { setAuthToken, getAuthToken } from "../actions";
+import styles from "@/styles/pages/login.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 const PIN_LENGTH = 4;

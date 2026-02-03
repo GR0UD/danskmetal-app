@@ -1,4 +1,4 @@
-import styles from "@/app/[id]/menu.module.scss";
+import styles from "@/styles/pages/menu.module.scss";
 import type { Sandwich, DressingOption } from "./index";
 
 interface OrderSummaryProps {

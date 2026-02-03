@@ -11,7 +11,7 @@ import {
   SuccessMessage,
 } from "@/components/menu";
 import { sandwiches, breads, dressings } from "@/data/menu";
-import styles from "./menu.module.scss";
+import styles from "@/styles/pages/menu.module.scss";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 

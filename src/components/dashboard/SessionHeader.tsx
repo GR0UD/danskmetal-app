@@ -1,6 +1,6 @@
 import { IoQrCode, IoTrash } from "react-icons/io5";
 import { ImSpinner8 } from "react-icons/im";
-import styles from "@/app/(pages)/dashboard/dashboard.module.scss";
+import styles from "@/styles/pages/dashboard.module.scss";
 
 interface SessionHeaderProps {
   status: "active" | "closed";

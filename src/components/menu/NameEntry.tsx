@@ -1,4 +1,4 @@
-import styles from "@/app/[id]/menu.module.scss";
+import styles from "@/styles/pages/menu.module.scss";
 
 interface NameEntryProps {
   customerName: string;

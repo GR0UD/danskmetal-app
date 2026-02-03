@@ -1,6 +1,16 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import styles from "./header.module.scss";
 
 export default function Header() {
+  const pathname = usePathname();
+
+  // Hide header only on the root "/" page
+  if (pathname === "/") {
+    return null;
+  }
+
   return (
     <header className={styles.header}>
       <div>

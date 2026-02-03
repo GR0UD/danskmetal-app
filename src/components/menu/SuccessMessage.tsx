@@ -1,7 +1,7 @@
 import { IoCheckmarkCircle } from "react-icons/io5";
 import { IoTrash } from "react-icons/io5";
 import Image from "next/image";
-import styles from "@/app/[id]/menu.module.scss";
+import styles from "@/styles/pages/menu.module.scss";
 
 interface OrderInfo {
   sandwich: string;

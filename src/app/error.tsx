@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./error.module.scss";
+import styles from "@/styles/pages/error.module.scss";
 
 export default function Error({
   error: _error,
