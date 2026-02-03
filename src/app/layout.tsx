@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Poppins, Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { usePathname } from "next/navigation";
 import Header from "@/components/header";
 
 import "@/styles/main.scss";
@@ -17,20 +19,18 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Dansk Metal - Sandwich Bestilling",
-  description: "Bestil sandwiches til dit team med QR-koder",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const showHeader = pathname !== "/";
+
   return (
     <html lang="da" data-scroll-behavior="smooth">
       <body className={`${poppins.variable} ${inter.variable}`}>
-        <Header />
+        {showHeader && <Header />}
         {children}
         <ToastContainer position="bottom-center" autoClose={3000} />
       </body>
