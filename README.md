@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dansk Metal App
+
+<p align="center">
+   <b>Tech Stack</b><br>
+   <img src="https://img.shields.io/badge/Next.js-000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js"/>
+   <img src="https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+   <img src="https://img.shields.io/badge/SCSS-c6538c?style=for-the-badge&logo=sass&logoColor=white" alt="SCSS"/>
+   <img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint"/>
+</p>
+
+A modern web application for Dansk Metal, built with Next.js, TypeScript, and a robust set of tools for a seamless developer and user experience.
+
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Scripts](#scripts)
+- [Styling](#styling)
+- [API](#api)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **Language:** TypeScript
+- **Styling:** SCSS Modules, global SCSS
+- **Linting:** ESLint
+- **State/Logic:** React Hooks
+- **API:** REST (configurable via environment variable)
+- **Other:**
+  - Modern React features (Server/Client Components)
+  - Modular component structure
+
+## Project Structure
+
+```
+.
+├── public/                # Static assets (images, etc.)
+├── src/
+│   ├── app/               # Next.js app directory (routing, pages)
+│   ├── components/        # Reusable UI components
+│   ├── data/              # Static data (e.g., menu)
+│   ├── hooks/             # Custom React hooks
+│   ├── styles/            # SCSS styles (global, modules)
+│   └── types/             # TypeScript type definitions
+├── .env                   # Environment variables
+├── eslint.config.mjs      # ESLint configuration
+├── next.config.ts         # Next.js configuration
+├── package.json           # Project metadata and scripts
+├── tsconfig.json          # TypeScript configuration
+└── README.md              # Project documentation
+```
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Set up environment variables:**
+   - Copy `.env.example` to `.env` (if available) and configure as needed.
+   - Example:
+     ```env
+     NEXT_PUBLIC_API_URL=http://localhost:3001/api
+     ```
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   The app will be available at [http://localhost:3000](http://localhost:3000).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Environment Variables
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `NEXT_PUBLIC_API_URL`: Base URL for the backend API (must be public for Next.js frontend access).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` — Start the development server
+- `npm run build` — Build for production
+- `npm run start` — Start the production server
+- `npm run lint` — Run ESLint
 
-## Learn More
+## Styling
 
-To learn more about Next.js, take a look at the following resources:
+- Uses SCSS modules for component-level styles (e.g., `header.module.scss`).
+- Global styles and variables in `src/styles/`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- The app communicates with a REST API, base URL set via `NEXT_PUBLIC_API_URL`.
+- API calls are managed via custom hooks (see `src/hooks/useApi.ts`).
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a pull request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+[MIT](LICENSE)
