@@ -1,13 +1,5 @@
 # Dansk Metal App
 
-<p align="center">
-   <b>Tech Stack</b><br>
-   <img src="https://img.shields.io/badge/Next.js-000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js"/>
-   <img src="https://img.shields.io/badge/TypeScript-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
-   <img src="https://img.shields.io/badge/SCSS-c6538c?style=for-the-badge&logo=sass&logoColor=white" alt="SCSS"/>
-   <img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white" alt="ESLint"/>
-</p>
-
 A modern web application for Dansk Metal, built with Next.js, TypeScript, and a robust set of tools for a seamless developer and user experience.
 
 ## Table of Contents
